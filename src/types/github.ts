@@ -7,7 +7,14 @@ export interface GitHubRepo {
   stargazers_count: number
   forks_count: number
   open_issues_count: number
-  pushed_at: string
+  watchers_count: number
+  pushed_at: string | null
+  created_at: string
+  language: string | null
+  topics: string[]
+  license: { name: string } | null
+  fork: boolean
+  archived: boolean
   owner: {
     login: string
     avatar_url: string
@@ -15,7 +22,7 @@ export interface GitHubRepo {
 }
 
 export interface RepoFetchError {
-  kind: 'not_found' | 'rate_limited' | 'network' | 'invalid_path'
+  kind: 'not_found' | 'rate_limited' | 'network' | 'invalid_path' | 'unauthorized' | 'server_error'
   message: string
 }
 

@@ -27,31 +27,34 @@ export function RepoSearchInput({
   placeholder = "owner/repo",
   className,
 }: RepoSearchInputProps) {
+  const id = React.useId()
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && value.trim()) {
       onSearch()
     }
   }
 
   return (
     <div className={cn("flex flex-col gap-1.5", className)}>
-      <Label>{label}</Label>
+      <Label htmlFor={id}>{label}</Label>
       <div className="flex gap-2">
         <div className="relative flex-1">
           <Input
+            id={id}
             value={value}
             onChange={(e) => onChange(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
             disabled={isLoading}
-            className="pr-8"
+            className="pr-8 font-mono text-sm"
           />
           {value && (
             <button
               type="button"
               onClick={onClear}
               disabled={isLoading}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground disabled:pointer-events-none"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
               aria-label="Clear"
             >
               <XIcon className="size-4" />

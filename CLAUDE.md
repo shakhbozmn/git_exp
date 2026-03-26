@@ -4,7 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Rules
 
-- use pnpm instaed of npm or yarn
+- use pnpm instead of npm or yarn
+- use `.agents/skills/frontend-design` for UI/UX decisions and design work
+- use `.agents/skills/find-skills` for research and finding best skills to solve a problem and install them
+- dont use general boilerplate colour palette like general purple like colours, instead use the shadcn/ui new-york palette with zinc colors for a modern, elegant look and have modern, elegant design as a core principle in UI/UX decisions
+- use the best possible UI/UX patterns
 - always run lint and type checks before pushing code
 - follow the architecture and conventions outlined below
 - for any non-trivial task, write a plan first and verify it before implementation
@@ -12,6 +16,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - use subagents for research and parallel analysis to keep the main context clean
 - demand elegance in solutions, but avoid over-engineering simple fixes
 - when given a bug report, just fix it without asking for hand-holding. Point at logs, errors, failing tests, then resolve them. No context switching required from the user.
+- after completing any major change, distill the key principle learned and add it as a rule in CLAUDE.md
+- after ANY correction from the user: update `tasks/lessons.md` with the pattern — write a rule that prevents the same mistake from recurring, ruthlessly iterate on these lessons until mistake rate drops, and review `tasks/lessons.md` at the start of each session before touching any code
+- use `src/components/custom/` only for components that are reusable and not dependent on the state, props, or context of a specific feature; everything else belongs inside its owning container
+- containers are self-contained, independent units of feature logic — each lives in `src/containers/<feature-name>/` and may own its own `components/`, `hooks/`, `types/`, `utils/`, `services/` subdirectories
 
 ## Commands
 
@@ -29,7 +37,7 @@ CI runs: lint → `tsc --noEmit` → build. All three must pass before merging t
 ## Architecture
 
 **Framework:** Next.js 16 App Router (React 19, TypeScript strict mode). Path alias `@/*` → `src/*`.
-**Styling:** Tailwind CSS v4 via PostCSS. shadcn/ui for primitives. Custom components in `src/components/custom/`.
+**Styling:** Tailwind CSS v4 via PostCSS. shadcn/ui for primitives. Globally shared custom components in `src/components/custom/`.
 **State Management:** No global state library. All state is co-located in React components and hooks.
 **API Layer:** Framework clients (REST for server-side, Socket.IO for client). Raw API calls in `src/api/`, wrapped in services in `src/services/`.
 **Routing:** Typed route constants in `src/config/appRoutes.ts`. No string literals for paths.
@@ -37,16 +45,29 @@ CI runs: lint → `tsc --noEmit` → build. All three must pass before merging t
 
 ### Layer Structure
 
-| Layer         | Path                     | Purpose                                                                                       |
-| ------------- | ------------------------ | --------------------------------------------------------------------------------------------- |
-| Pages         | `src/app/`               | Thin RSC wrappers; fetch initial data server-side, pass to client containers                  |
-| Containers    | `src/containers/`        | Feature-level smart components owning business logic                                          |
-| Components    | `src/components/custom/` | App-specific compound components                                                              |
-| UI Primitives | `src/components/ui/`     | shadcn/ui (new-york style, zinc color) — do not modify generated files                        |
-| Hooks         | `src/hooks/`             | Custom React hooks; all state is co-located here (no global state library)                    |
-| API           | `src/api/`               | Raw API call functions, one file per operation                                                |
-| Services      | `src/services/`          | Feathers client wrappers + Firebase auth                                                      |
-| Config        | `src/config/`            | Env vars (`environment.ts`), typed routes (`appRoutes.ts`), service names (`api/services.ts`) |
+| Layer             | Path                             | Purpose                                                                                       |
+| ----------------- | -------------------------------- | --------------------------------------------------------------------------------------------- |
+| Pages             | `src/app/`                       | Thin RSC wrappers; fetch initial data server-side, pass to client containers                  |
+| Containers        | `src/containers/<feature-name>/` | Feature-level smart components; own business logic + scoped components, hooks, types          |
+| Shared Components | `src/components/custom/`         | App-specific compound components reused across multiple features                              |
+| UI Primitives     | `src/components/ui/`             | shadcn/ui (new-york style, zinc color) — do not modify generated files                        |
+| Hooks             | `src/hooks/`                     | Shared custom React hooks used by multiple features                                           |
+| API               | `src/api/`                       | Shared raw API call functions, one file per operation                                         |
+| Services          | `src/services/`                  | Feathers client wrappers + Firebase auth                                                      |
+| Config            | `src/config/`                    | Env vars (`environment.ts`), typed routes (`appRoutes.ts`), service names (`api/services.ts`) |
+
+### Container folder structure
+
+```
+src/containers/<feature-name>/
+├── <FeatureName>Container.tsx   # main smart component (entry point)
+├── components/                  # UI components used only by this container
+├── hooks/                       # hooks used only by this container
+├── types/                       # types used only by this container
+└── api/                         # raw API calls used only by this container (optional)
+```
+
+Global shared code stays in the top-level layers (`src/api/`, `src/types/`, `src/hooks/`, etc.). When in doubt, start scoped inside the container and promote to a shared layer only when a second consumer appears.
 
 ### Two Feathers Clients
 
@@ -86,7 +107,7 @@ Always use the appropriate client for the rendering context.
 - Skip this for simple, obvious fixes - don't over-engineer
 - Challenge your own work before presenting it
 
-### 6. Autonomous Bug Fixing
+### 4. Autonomous Bug Fixing
 
 - When given a bug report: just fix it. Don't ask for hand-holding
 - Point at logs, errors, failing tests -> then resolve them
