@@ -5,6 +5,16 @@ import { fetchRepo } from "@/api/fetchRepo"
 import type { RepoFetchState } from "@/types/github"
 
 const STORAGE_KEY = "github-comparison-repos"
+
+function syncUrl(left: string, right: string) {
+  try {
+    const params = new URLSearchParams()
+    if (left) params.set("left", left)
+    if (right) params.set("right", right)
+    const q = params.toString()
+    window.history.replaceState(null, "", q ? `?${q}` : window.location.pathname)
+  } catch { /* ignore */ }
+}
 const HISTORY_KEY = "github-comparison-history"
 const HISTORY_MAX = 5
 
@@ -74,7 +84,7 @@ export function useRepoComparison() {
     } catch { /* ignore */ }
   }, [])
 
-  // Persist path changes to localStorage + URL sync
+  // Persist path changes to localStorage only (URL synced on search)
   React.useEffect(() => {
     if (!hydrated) return
     try {
@@ -82,13 +92,6 @@ export function useRepoComparison() {
       if (leftPath) stored["left"] = leftPath
       if (rightPath) stored["right"] = rightPath
       localStorage.setItem(STORAGE_KEY, JSON.stringify(stored))
-    } catch { /* ignore */ }
-    try {
-      const params = new URLSearchParams()
-      if (leftPath) params.set("left", leftPath)
-      if (rightPath) params.set("right", rightPath)
-      const q = params.toString()
-      window.history.replaceState(null, "", q ? `?${q}` : window.location.pathname)
     } catch { /* ignore */ }
   }, [hydrated, leftPath, rightPath])
 
@@ -107,16 +110,19 @@ export function useRepoComparison() {
   }, [leftState.status, rightState.status])
 
   const fetchLeft = React.useCallback(async () => {
+    syncUrl(leftPath, rightPath)
     await runFetch(leftPath, leftControllerRef, setLeftState)
-  }, [leftPath])
+  }, [leftPath, rightPath])
 
   const fetchRight = React.useCallback(async () => {
+    syncUrl(leftPath, rightPath)
     await runFetch(rightPath, rightControllerRef, setRightState)
-  }, [rightPath])
+  }, [leftPath, rightPath])
 
   const fetchBoth = React.useCallback(async (left: string, right: string) => {
     setLeftPath(left)
     setRightPath(right)
+    syncUrl(left, right)
     await Promise.allSettled([
       runFetch(left, leftControllerRef, setLeftState),
       runFetch(right, rightControllerRef, setRightState),
@@ -124,25 +130,24 @@ export function useRepoComparison() {
   }, [])
 
   const swapRepos = React.useCallback(() => {
-    const pl = leftPath
-    const pr = rightPath
-    const sl = leftState
-    const sr = rightState
-    setLeftPath(pr)
-    setRightPath(pl)
-    setLeftState(sr)
-    setRightState(sl)
+    syncUrl(rightPath, leftPath)
+    setLeftPath(rightPath)
+    setRightPath(leftPath)
+    setLeftState(rightState)
+    setRightState(leftState)
   }, [leftPath, rightPath, leftState, rightState])
 
   const clearLeft = React.useCallback(() => {
     setLeftPath("")
     setLeftState({ status: "idle" })
-  }, [])
+    syncUrl("", rightPath)
+  }, [rightPath])
 
   const clearRight = React.useCallback(() => {
     setRightPath("")
     setRightState({ status: "idle" })
-  }, [])
+    syncUrl(leftPath, "")
+  }, [leftPath])
 
   return {
     leftPath,

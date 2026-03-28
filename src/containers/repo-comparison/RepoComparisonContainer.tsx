@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { TrophyIcon, GitCompareIcon, ArrowLeftRightIcon } from "lucide-react"
+import { TrophyIcon, GitCompareIcon, ArrowLeftRightIcon, ArrowUpDownIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useRepoComparison } from "./hooks/useRepoComparison"
@@ -79,11 +79,11 @@ export function RepoComparisonContainer() {
     <div className="flex flex-col gap-8 max-w-6xl mx-auto px-4 py-8">
       {/* Enhanced hero section */}
       <div className="flex flex-col items-center gap-3 text-center">
-        <div className="flex items-center justify-center size-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800 border border-border">
+        <div className="flex items-center justify-center size-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800 border border-border animate-hero-in">
           <GitCompareIcon className="size-6 text-zinc-600 dark:text-zinc-400" />
         </div>
-        <div className="flex flex-col items-center gap-1.5">
-          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-zinc-400 bg-clip-text text-transparent">
+        <div className="flex flex-col items-center gap-1.5 animate-hero-in anim-delay-100">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-zinc-400 bg-clip-text text-transparent">
             GitHub Repository Comparison
           </h1>
           <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-border rounded-full px-2.5 py-0.5">
@@ -91,14 +91,14 @@ export function RepoComparisonContainer() {
             Live GitHub data
           </span>
         </div>
-        <p className="text-muted-foreground text-sm max-w-md">
+        <p className="text-base sm:text-sm text-muted-foreground max-w-md animate-hero-in anim-delay-200">
           Instantly compare metrics, activity, and metadata between any two GitHub repositories
         </p>
-        <p className="text-xs text-muted-foreground/60">Tip: Press Enter &#8629; to search</p>
+        <p className="text-xs text-muted-foreground/60 animate-hero-in anim-delay-300">Tip: Press Enter &#8629; to search</p>
       </div>
 
       {/* Search row with swap button */}
-      <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr] gap-4 items-end">
+      <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr] gap-4 items-end animate-hero-in anim-delay-400">
         <RepoSearchInput
           label="Left Repository"
           value={leftPath}
@@ -130,8 +130,21 @@ export function RepoComparisonContainer() {
         />
       </div>
 
+      {/* Mobile swap — visible only below sm breakpoint */}
+      <div className="flex sm:hidden justify-center -mt-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={swapRepos}
+          className="gap-1.5 text-muted-foreground text-xs"
+        >
+          <ArrowUpDownIcon className="size-3.5" />
+          Swap
+        </Button>
+      </div>
+
       {/* Preset chips */}
-      <div className="overflow-x-auto -mx-4 px-4">
+      <div className="overflow-x-auto -mx-4 px-4 animate-hero-in anim-delay-500">
         <div className="flex gap-2 pb-1 w-max sm:w-auto sm:flex-wrap">
           {PRESET_PAIRS.map((p) => (
             <button
@@ -150,10 +163,17 @@ export function RepoComparisonContainer() {
         </div>
       </div>
 
-      {/* Winner banner */}
-      {showWinnerBadge && (
-        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-          {leftWinCount !== rightWinCount ? (
+      {/* Winner banner — always in DOM, fades in/out to avoid layout shift */}
+      <div
+        className={cn(
+          "flex items-center justify-center gap-2 text-sm text-muted-foreground min-h-[28px]",
+          "transition-opacity duration-300",
+          showWinnerBadge ? "opacity-100" : "opacity-0 pointer-events-none select-none"
+        )}
+        aria-hidden={!showWinnerBadge}
+      >
+        {showWinnerBadge && (
+          leftWinCount !== rightWinCount ? (
             <>
               <TrophyIcon className="size-4 text-amber-500 shrink-0" />
               <span className="font-medium text-foreground">
@@ -169,13 +189,13 @@ export function RepoComparisonContainer() {
             </>
           ) : (
             <span>Equal match — no overall winner</span>
-          )}
-        </div>
-      )}
+          )
+        )}
+      </div>
 
       {/* Recent pairs history */}
       {recentPairs.length > 0 && (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 animate-card-in">
           <p className="text-xs font-medium text-muted-foreground">Recently compared:</p>
           <div className="overflow-x-auto -mx-4 px-4">
             <div className="flex gap-2 pb-1 w-max sm:w-auto sm:flex-wrap">
@@ -213,6 +233,7 @@ export function RepoComparisonContainer() {
           showWinnerBadge={showWinnerBadge}
           otherData={leftData}
           isOverallWinner={rightIsOverallWinner}
+          animationDelay="100ms"
         />
       </div>
     </div>

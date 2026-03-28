@@ -47,7 +47,7 @@ export function RepoSearchInput({
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
             disabled={isLoading}
-            className="pr-8 font-mono text-sm"
+            className="pr-8 font-mono text-base sm:text-sm"
           />
           {value && (
             <button

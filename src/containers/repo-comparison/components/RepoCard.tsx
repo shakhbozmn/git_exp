@@ -55,6 +55,7 @@ interface RepoCardProps {
   otherData?: GitHubRepo | null
   isOverallWinner?: boolean
   className?: string
+  animationDelay?: string
 }
 
 function formatFullDate(iso: string | null): string {
@@ -88,12 +89,14 @@ function SuccessCard({
   showWinnerBadge,
   otherData,
   isOverallWinner,
+  animationDelay,
 }: {
   data: GitHubRepo
   winners: WinnerMap
   showWinnerBadge: boolean
   otherData: GitHubRepo | null
   isOverallWinner: boolean
+  animationDelay?: string
 }) {
   const fallbackChar = data.owner.login[0]?.toUpperCase() ?? "?"
   const visibleTopics = data.topics.slice(0, 3)
@@ -102,13 +105,14 @@ function SuccessCard({
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 p-4 border rounded-xl bg-card",
+        "h-full flex flex-col gap-4 p-4 border rounded-xl bg-card",
         "hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-default",
         "animate-card-in",
         isOverallWinner
           ? "ring-2 ring-amber-400/70 shadow-lg shadow-amber-100/50 dark:shadow-amber-900/20"
           : ""
       )}
+      style={animationDelay !== undefined ? { animationDelay } : undefined}
     >
       {/* Header row */}
       <div className="flex items-start gap-3">
@@ -180,6 +184,9 @@ function SuccessCard({
         </div>
       )}
 
+      {/* Spacer: pins metrics to card bottom regardless of topic count */}
+      <div className="flex-1 min-h-0" />
+
       <Separator />
 
       {/* Metrics */}
@@ -226,15 +233,18 @@ function SuccessCard({
         <span>
           Pushed <span className="font-medium text-foreground">{timeAgo(data.pushed_at)}</span>
         </span>
-        <span className="ml-auto">{formatFullDate(data.pushed_at)}</span>
+        <span className="ml-auto hidden sm:inline">{formatFullDate(data.pushed_at)}</span>
       </div>
     </div>
   )
 }
 
-function LoadingCard() {
+function LoadingCard({ animationDelay }: { animationDelay?: string }) {
   return (
-    <div className="flex flex-col gap-4 p-4 border rounded-xl bg-card">
+    <div
+      className="h-full flex flex-col gap-4 p-4 border rounded-xl bg-card animate-card-in"
+      style={animationDelay !== undefined ? { animationDelay } : undefined}
+    >
       <div className="flex items-center gap-3">
         <Skeleton className="size-10 rounded-full shrink-0" />
         <div className="flex flex-col gap-2 flex-1">
@@ -274,12 +284,18 @@ export function RepoCard({
   otherData,
   isOverallWinner,
   className,
+  animationDelay,
 }: RepoCardProps) {
   return (
-    <div aria-live="polite" aria-atomic="true" className={className}>
-      {state.status === "loading" && <LoadingCard />}
+    <div aria-live="polite" aria-atomic="true" className={cn("min-h-[460px]", className)}>
+      {state.status === "loading" && (
+        <LoadingCard {...(animationDelay !== undefined && { animationDelay })} />
+      )}
       {state.status === "error" && (
-        <div className="p-4 border rounded-xl bg-card">
+        <div
+          className="p-4 border rounded-xl bg-card animate-card-in"
+          style={animationDelay !== undefined ? { animationDelay } : undefined}
+        >
           <Alert variant="destructive">
             <ErrorIcon kind={state.error.kind} />
             <AlertDescription>{state.error.message}</AlertDescription>
@@ -294,6 +310,7 @@ export function RepoCard({
           showWinnerBadge={showWinnerBadge}
           otherData={otherData ?? null}
           isOverallWinner={isOverallWinner ?? false}
+          {...(animationDelay !== undefined && { animationDelay })}
         />
       )}
       {state.status === "idle" && (
