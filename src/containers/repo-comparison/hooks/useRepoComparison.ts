@@ -70,6 +70,9 @@ export function useRepoComparison() {
     if (initialLeft) setLeftPath(initialLeft)
     if (initialRight) setRightPath(initialRight)
     setHydrated(true)
+    // Auto-fetch from URL params (or localStorage fallback)
+    if (initialLeft) void runFetch(initialLeft, leftControllerRef, setLeftState)
+    if (initialRight) void runFetch(initialRight, rightControllerRef, setRightState)
     // 3. Load history
     try {
       const raw = localStorage.getItem(HISTORY_KEY)
