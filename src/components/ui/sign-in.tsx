@@ -1,6 +1,7 @@
 import { appRoutes } from '@/config/appRoutes'
 import { InitialData, LoginData } from '@/containers/auth/types'
 import { Eye, EyeOff } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import GoogleIcon from '../../../public/google.svg'
@@ -36,17 +37,11 @@ interface SignInPageProps {
 
 // --- SUB-COMPONENTS ---
 
-const GlassInputWrapper = ({ children }: { children: React.ReactNode }) => (
-  <div className="rounded-2xl border border-border bg-foreground/5 backdrop-blur-sm transition-colors focus-within:border-primary/70 focus-within:bg-primary/10">
-    {children}
-  </div>
-)
-
 const TestimonialCard = ({ testimonial, delay }: { testimonial: Testimonial; delay: string }) => (
   <div
     className={`animate-testimonial ${delay} flex items-start gap-3 rounded-3xl bg-card/40 dark:bg-zinc-800/40 backdrop-blur-xl border border-white/10 p-5 w-64`}
   >
-    <img src={testimonial.avatarSrc} className="h-10 w-10 object-cover rounded-2xl" alt="avatar" />
+    <Image src={testimonial.avatarSrc} width={40} height={40} className="h-10 w-10 object-cover rounded-2xl" alt="avatar" />
     <div className="text-sm leading-snug">
       <p className="flex items-center gap-1 font-medium">{testimonial.name}</p>
       <p className="text-muted-foreground">{testimonial.handle}</p>
@@ -68,7 +63,7 @@ export const SignInPage: React.FC<SignInPageProps> = ({
   updateData,
   loading,
   googleLoading,
-  errors
+  errors: _errors
 }) => {
   const [showPassword, setShowPassword] = useState(false)
 
