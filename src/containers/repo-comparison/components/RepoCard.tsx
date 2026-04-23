@@ -128,7 +128,7 @@ function SuccessCard({
           href={data.html_url}
           target="_blank"
           rel="noopener noreferrer"
-          className="shrink-0 p-1.5 rounded-md hover:bg-accent transition-colors"
+          className="shrink-0 flex items-center justify-center size-[44px] sm:size-auto sm:p-1.5 rounded-md hover:bg-accent transition-colors"
           aria-label="View on GitHub"
         >
           <ExternalLinkIcon className="size-4 text-muted-foreground" />
@@ -141,7 +141,7 @@ function SuccessCard({
       </p>
 
       {/* Metadata chips */}
-      <div className="flex flex-wrap gap-1.5 text-xs">
+      <div className="flex flex-wrap gap-1.5 text-sm sm:text-xs">
         {data.language !== null && (
           <span className="flex items-center gap-1 bg-muted rounded-full px-2 py-0.5">
             <span className={cn("size-2 rounded-full shrink-0", getLanguageColor(data.language))} />
@@ -171,13 +171,13 @@ function SuccessCard({
           {visibleTopics.map((topic) => (
             <span
               key={topic}
-              className="bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs rounded-full px-2 py-0.5"
+              className="bg-blue-500/10 text-blue-600 dark:text-blue-400 text-sm sm:text-xs rounded-full px-2 py-0.5"
             >
               {topic}
             </span>
           ))}
           {extraTopics > 0 && (
-            <span className="text-xs text-muted-foreground px-1 py-0.5">
+            <span className="text-sm sm:text-xs text-muted-foreground px-1 py-0.5">
               +{extraTopics} more
             </span>
           )}
@@ -228,7 +228,7 @@ function SuccessCard({
       <Separator />
 
       {/* Activity row */}
-      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+      <div className="flex items-center gap-1.5 text-sm sm:text-xs text-muted-foreground">
         <CalendarIcon className="size-3.5 shrink-0" />
         <span>
           Pushed <span className="font-medium text-foreground">{timeAgo(data.pushed_at)}</span>
@@ -287,13 +287,13 @@ export function RepoCard({
   animationDelay,
 }: RepoCardProps) {
   return (
-    <div aria-live="polite" aria-atomic="true" className={cn("min-h-[460px]", className)}>
+    <div aria-live="polite" aria-atomic="true" className={cn("min-h-[240px] sm:h-full sm:min-h-0 transition-all duration-300 ease-out", className)}>
       {state.status === "loading" && (
         <LoadingCard {...(animationDelay !== undefined && { animationDelay })} />
       )}
       {state.status === "error" && (
         <div
-          className="p-4 border rounded-xl bg-card animate-card-in"
+          className="h-full flex flex-col justify-center p-4 border rounded-xl bg-card animate-card-in"
           style={animationDelay !== undefined ? { animationDelay } : undefined}
         >
           <Alert variant="destructive">
@@ -314,11 +314,11 @@ export function RepoCard({
         />
       )}
       {state.status === "idle" && (
-        <div className="flex flex-col items-center justify-center gap-3 p-8 border-2 border-dashed rounded-xl text-center min-h-[240px]">
+        <div className="flex flex-col items-center justify-center gap-3 p-6 sm:p-8 border-2 border-dashed rounded-xl text-center h-full min-h-[240px]">
           <SearchIcon className="size-10 text-muted-foreground/50" />
           <div>
             <p className="text-sm font-medium text-muted-foreground">Search for a repository</p>
-            <p className="text-xs text-muted-foreground/70 mt-1">
+            <p className="text-sm sm:text-xs text-muted-foreground/70 mt-1">
               Enter owner/repo above to get started
             </p>
           </div>

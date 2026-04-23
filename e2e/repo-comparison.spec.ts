@@ -53,7 +53,8 @@ test.describe("Page structure", () => {
     await expect(page.getByText("Search for a repository").first()).toBeVisible()
   })
 
-  test("tip text is visible", async ({ page }) => {
+  test("tip text is visible on mobile", async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 })
     await expect(page.getByText(/press enter/i)).toBeVisible()
   })
 })

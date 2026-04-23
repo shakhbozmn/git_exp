@@ -76,11 +76,11 @@ export function RepoComparisonContainer() {
   const rightIsOverallWinner = showWinnerBadge && rightWinCount > leftWinCount
 
   return (
-    <div className="flex flex-col gap-8 max-w-6xl mx-auto px-4 py-8">
+    <div className="flex flex-col gap-4 max-w-6xl mx-auto px-4 py-4 sm:h-screen sm:py-3 sm:gap-3">
       {/* Enhanced hero section */}
-      <div className="flex flex-col items-center gap-3 text-center">
-        <div className="flex items-center justify-center size-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800 border border-border animate-hero-in">
-          <GitCompareIcon className="size-6 text-zinc-600 dark:text-zinc-400" />
+      <div className="flex flex-col items-center gap-3 text-center shrink-0 sm:gap-1.5">
+        <div className="flex items-center justify-center size-12 sm:size-9 rounded-2xl bg-zinc-100 dark:bg-zinc-800 border border-border animate-hero-in">
+          <GitCompareIcon className="size-6 sm:size-5 text-zinc-600 dark:text-zinc-400" />
         </div>
         <div className="flex flex-col items-center gap-1.5 animate-hero-in anim-delay-100">
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-zinc-400 bg-clip-text text-transparent">
@@ -94,11 +94,11 @@ export function RepoComparisonContainer() {
         <p className="text-base sm:text-sm text-muted-foreground max-w-md animate-hero-in anim-delay-200">
           Instantly compare metrics, activity, and metadata between any two GitHub repositories
         </p>
-        <p className="text-xs text-muted-foreground/60 animate-hero-in anim-delay-300">Tip: Press Enter &#8629; to search</p>
+        <p className="text-xs text-muted-foreground/60 animate-hero-in anim-delay-300 sm:hidden">Tip: Press Enter &#8629; to search</p>
       </div>
 
       {/* Search row with swap button */}
-      <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr] gap-4 items-end animate-hero-in anim-delay-400">
+      <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr] gap-4 items-end animate-hero-in anim-delay-400 shrink-0">
         <RepoSearchInput
           label="Left Repository"
           value={leftPath}
@@ -131,7 +131,7 @@ export function RepoComparisonContainer() {
       </div>
 
       {/* Mobile swap — visible only below sm breakpoint */}
-      <div className="flex sm:hidden justify-center -mt-2">
+      <div className="flex sm:hidden justify-center -mt-2 shrink-0">
         <Button
           variant="outline"
           size="sm"
@@ -144,7 +144,7 @@ export function RepoComparisonContainer() {
       </div>
 
       {/* Preset chips */}
-      <div className="overflow-x-auto -mx-4 px-4 animate-hero-in anim-delay-500">
+      <div className="overflow-x-auto -mx-4 px-4 animate-hero-in anim-delay-500 shrink-0">
         <div className="flex gap-2 pb-1 w-max sm:w-auto sm:flex-wrap">
           {PRESET_PAIRS.map((p) => (
             <button
@@ -166,7 +166,7 @@ export function RepoComparisonContainer() {
       {/* Winner banner — always in DOM, fades in/out to avoid layout shift */}
       <div
         className={cn(
-          "flex items-center justify-center gap-2 text-sm text-muted-foreground min-h-[28px]",
+          "flex items-center justify-center gap-2 text-sm text-muted-foreground min-h-[28px] shrink-0",
           "transition-opacity duration-300",
           showWinnerBadge ? "opacity-100" : "opacity-0 pointer-events-none select-none"
         )}
@@ -195,7 +195,7 @@ export function RepoComparisonContainer() {
 
       {/* Recent pairs history */}
       {recentPairs.length > 0 && (
-        <div className="flex flex-col gap-2 animate-card-in">
+        <div className="flex flex-col gap-2 animate-card-in shrink-0">
           <p className="text-xs font-medium text-muted-foreground">Recently compared:</p>
           <div className="overflow-x-auto -mx-4 px-4">
             <div className="flex gap-2 pb-1 w-max sm:w-auto sm:flex-wrap">
@@ -219,7 +219,7 @@ export function RepoComparisonContainer() {
       )}
 
       {/* Cards grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:flex-1 sm:min-h-0 sm:overflow-y-auto">
         <RepoCard
           state={leftState}
           winners={leftWinners}
