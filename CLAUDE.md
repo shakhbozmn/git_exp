@@ -5,6 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Rules
 
 - use pnpm instead of npm or yarn
+- for full project context, feature inventory, and requirements compliance status, refer to `.claude/docs/system-overview.md`
 - use `.agents/skills/frontend-design` for UI/UX decisions and design work
 - use `.agents/skills/find-skills` for research and finding best skills to solve a problem and install them
 - dont use general boilerplate colour palette like general purple like colours, instead use the shadcn/ui new-york palette with zinc colors for a modern, elegant look and have modern, elegant design as a core principle in UI/UX decisions
