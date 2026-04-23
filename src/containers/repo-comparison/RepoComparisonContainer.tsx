@@ -33,7 +33,7 @@ function computeWinnerMap(
   return {
     stars: repo.stargazers_count > other.stargazers_count,
     forks: repo.forks_count > other.forks_count,
-    issues: repo.open_issues_count > other.open_issues_count,
+    issues: repo.open_issues_count < other.open_issues_count,
     watchers: repo.watchers_count > other.watchers_count,
   }
 }

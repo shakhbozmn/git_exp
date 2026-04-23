@@ -61,7 +61,7 @@ export function RepoSearchInput({
             </button>
           )}
         </div>
-        <Button onClick={onSearch} disabled={isLoading || !value.trim()}>
+        <Button variant="outline" onClick={onSearch} disabled={isLoading || !value.trim()}>
           {isLoading ? <Spinner /> : <SearchIcon className="size-4" />}
           <span className="sr-only">Search</span>
         </Button>

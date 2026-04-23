@@ -110,7 +110,7 @@ function SuccessCard({
         "animate-card-in",
         isOverallWinner
           ? "ring-2 ring-amber-400/70 shadow-lg shadow-amber-100/50 dark:shadow-amber-900/20"
-          : ""
+          : "shadow-sm"
       )}
       style={animationDelay !== undefined ? { animationDelay } : undefined}
     >
