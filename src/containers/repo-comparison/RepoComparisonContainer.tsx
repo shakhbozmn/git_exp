@@ -76,7 +76,7 @@ export function RepoComparisonContainer() {
   const rightIsOverallWinner = showWinnerBadge && rightWinCount > leftWinCount
 
   return (
-    <div className="flex flex-col gap-4 max-w-6xl mx-auto px-4 py-4 sm:h-screen sm:py-3 sm:gap-3">
+    <div className="flex flex-col gap-6 max-w-6xl mx-auto px-4 py-8">
       {/* Enhanced hero section */}
       <div className="flex flex-col items-center gap-3 text-center shrink-0 sm:gap-1.5">
         <div className="flex items-center justify-center size-12 sm:size-9 rounded-2xl bg-zinc-100 dark:bg-zinc-800 border border-border animate-hero-in">
@@ -219,7 +219,7 @@ export function RepoComparisonContainer() {
       )}
 
       {/* Cards grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:flex-1 sm:min-h-0 sm:overflow-y-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <RepoCard
           state={leftState}
           winners={leftWinners}

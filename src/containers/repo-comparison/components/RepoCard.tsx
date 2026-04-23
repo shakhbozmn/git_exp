@@ -287,7 +287,7 @@ export function RepoCard({
   animationDelay,
 }: RepoCardProps) {
   return (
-    <div aria-live="polite" aria-atomic="true" className={cn("min-h-[240px] sm:h-full sm:min-h-0 transition-all duration-300 ease-out", className)}>
+    <div aria-live="polite" aria-atomic="true" className={cn("h-full transition-all duration-300 ease-out", className)}>
       {state.status === "loading" && (
         <LoadingCard {...(animationDelay !== undefined && { animationDelay })} />
       )}
