@@ -3,6 +3,20 @@ name: PR Checks
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - 'src/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'e2e/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'tsconfig*.json'
+      - 'next.config.*'
+      - 'tailwind.config.*'
+      - 'postcss.config.*'
+      - 'playwright.config.*'
+      - '.eslintrc*'
+      - 'eslint.config.*'
 
 permissions:
   pull-requests: write
