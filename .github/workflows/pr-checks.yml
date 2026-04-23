@@ -47,21 +47,36 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: pnpm run lint
+        id: lint
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          pnpm run lint 2>&1 | tee lint-output.txt
 
       - name: Type-check
-        run: npx tsc --noEmit
+        id: typecheck
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          npx tsc --noEmit 2>&1 | tee tsc-output.txt
 
       - name: Build
-        run: pnpm run build
+        id: build
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          pnpm run build 2>&1 | tee build-output.txt
 
       - name: Install Playwright browsers
+        if: steps.build.outcome == 'success'
         run: pnpm exec playwright install chromium --with-deps
 
       - name: Start production server
+        if: steps.build.outcome == 'success'
         run: pnpm start &
 
       - name: Wait for server on port 3000
+        if: steps.build.outcome == 'success'
         run: |
           echo "Waiting for server..."
           for i in $(seq 1 30); do
@@ -76,6 +91,7 @@ jobs:
 
       - name: Run Playwright E2E tests
         id: e2e
+        if: steps.build.outcome == 'success'
         run: pnpm run e2e
         continue-on-error: true
 
@@ -86,6 +102,18 @@ jobs:
           name: playwright-results
           path: playwright-results.json
           retention-days: 14
+
+      - name: Post CI summary comment
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          LINT_OUTCOME: ${{ steps.lint.outcome }}
+          TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
+          E2E_OUTCOME: ${{ steps.e2e.outcome }}
+        run: node scripts/post-ci-summary.mjs
 
       - name: Update PR checklist
         if: always()
@@ -103,8 +131,16 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
           BRANCH_NAME: ${{ github.head_ref }}
           PR_URL: ${{ github.event.pull_request.html_url }}
+          LINT_OUTCOME: ${{ steps.lint.outcome }}
+          TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
         run: node scripts/create-failure-issues.mjs
 
-      - name: Fail if E2E tests failed
-        if: steps.e2e.outcome == 'failure'
+      - name: Fail if any check failed
+        if: |
+          always() &&
+          (steps.lint.outcome == 'failure' ||
+           steps.typecheck.outcome == 'failure' ||
+           steps.build.outcome == 'failure' ||
+           steps.e2e.outcome == 'failure')
         run: exit 1
