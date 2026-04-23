@@ -30,7 +30,7 @@ export function RepoMetricRow({
         "flex flex-col rounded-md px-3 py-2 text-sm",
         isWinner && showWinnerBadge
           ? "bg-amber-50/80 dark:bg-amber-950/30 border-l-2 border-l-amber-400 pl-[calc(0.75rem-2px)]"
-          : ""
+          : showWinnerBadge ? "bg-muted/30" : ""
       )}
     >
       <div className="flex items-center justify-between">
