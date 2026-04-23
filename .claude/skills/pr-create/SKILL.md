@@ -92,10 +92,8 @@ pnpm run lint 2>&1 | tail -5
 npx tsc --noEmit 2>&1 | tail -5
 ```
 
-If lint or type check has **errors** (not warnings), stop and report:
-"PR not created — lint/type errors found. Fix them first."
-
-Warnings are acceptable — note them but continue.
+If lint or type check exits non-zero (errors **or** warnings — `--max-warnings 0` is enforced),
+stop and report: "PR not created — lint/type check failed. Fix all issues first."
 
 ### 6. Push branch if needed
 
@@ -113,16 +111,23 @@ git push -u origin {current_branch}
 
 ### 7. Create the PR
 
-```bash
-gh pr create \
-  --title "{title}" \
-  --body "{body}" \
-  --base {base_branch} \
-  {--draft if draft} \
-  {--reviewer {username} if provided}
+Use the GitHub MCP `create_pull_request` tool:
+
+```
+create_pull_request(
+  owner   = {repo_owner},
+  repo    = {repo_name},
+  title   = "{title}",
+  body    = "{body}",
+  head    = "{current_branch}",
+  base    = "{base_branch}",
+  draft   = {true|false},
+)
 ```
 
-If `gh` is not authenticated, stop and show: "Run `gh auth login` first, then retry."
+Infer `owner` and `repo` from `git remote get-url origin`.
+
+If reviewers were provided, call `update_pull_request` with `reviewers` after creation.
 
 ### 8. Output
 
